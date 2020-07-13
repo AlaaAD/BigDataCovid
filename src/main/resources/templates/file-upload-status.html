@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>File upload</title>
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/4.1.0/css/bootstrap.min.css"/>
+    <script src="/webjars/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+
+
+<div class="container ">
+    <div class="row">
+        <div class="col-10 mx-auto">
+            <h1>Listes des données</h1>
+            <!--display error if any-->
+            <div class="alert alert-danger" role="alert" th:if="${!status}">
+                <strong>Error:</strong>
+                <span th:text="${message}"></span>
+            </div>
+                    <div class="btn-group" role="group" aria-label="Button group example">
+                        <a  class="btn btn-primary " th:href="@{nbrCasesPerLocation}">Nombre des cas pour chaque Pays</a>
+                        <a  class="btn btn-primary " th:href="@{nbrDeathsPerLocation}">Nombre des cas morts pour chaque Pays</a>
+                        <a  class="btn btn-primary " th:href="@{moyenAgePerLocation}">Moyen d'age infécté pour chaque Pays</a>
+                    </div>
+        </div>
+    </div>
+    <div class="row">
+        <div>
+
+            <!--display covids list-->
+            <table class="table table-striped" th:if="${status}">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Iso Code</th>
+                    <th scope="col">Pays</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Total Cases</th>
+                    <th scope="col">New Cases</th>
+                    <th scope="col">Total Deaths</th>
+                    <th scope="col">New Deaths</th>
+                    <th scope="col">Moyen d'age</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="covid, i : ${covids}">
+                    <th scope="row" th:text="${i.index + 1}"></th>
+                    <td th:text="${covid.iso_code}"></td>
+                    <td th:text="${covid.location}"></td>
+                    <td th:text="${covid.date}"></td>
+                    <td th:text="${covid.total_cases}"></td>
+                    <td th:text="${covid.new_cases}"></td>
+                    <td th:text="${covid.total_deaths}"></td>
+                    <td th:text="${covid.new_deaths}"></td>
+                    <td th:text="${covid.median_age}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Index</title>
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/4.1.0/css/bootstrap.min.css"/>
+    <script src="/webjars/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="container">
+
+        <h1>BIG DATA PROJECT</h1>
+        <h2>Il s'agit d'un exemple très simplifié de l’utilisation des big data. </h2>
+        <p>Nous avons choisi de prendre comme exemple des enregistrements de COVID-19
+            dans différents pays dans une période précis. Tous d’abord nous allons collecter
+            une très petite partie des données de ce fichier Excel qui contient les données de chaque pays,
+            nous allons ensuite les traiter et enfin les analyser.</p>
+
+<div >
+    <div class="card">
+
+        <div class="card-body">
+            <form method="POST" th:action="@{/upload-csv-file}" enctype="multipart/form-data">
+                <div class="form-group mt-3">
+                    <label for="file">Selectionner le fichier OPEN DATA format : CSV </label>
+                    <input type="file" name="file" class="form-control-file" id="file" accept=".csv">
+                </div>
+                <button type="submit" class="btn btn-primary">Collecter DATA</button>
+            </form>
+        </div>
+    </div>
+
+
+</div>
+
+</div>
+</body>
+</html>

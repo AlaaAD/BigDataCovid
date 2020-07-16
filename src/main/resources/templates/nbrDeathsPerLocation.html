@@ -1,10 +1,38 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://java.sun.com/xml/ns/persistence/orm">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Nombre des morts</title>
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/4.1.0/css/bootstrap.min.css"/>
+    <script src="/webjars/bootstrap/4.1.0/js/bootstrap.min.js"></script>
 </head>
 <body>
+<div>
+<div class="container">
+
+
+    <!--display covids list-->
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">Continent</th>
+            <th scope="col">Pays</th>
+            <th scope="col">Total Deaths</th>
+
+        </tr>
+        </thead>
+        <tbody>
+        <tr  th:each="p:${listDeaths}">
+
+            <td th:text="${p.continent}"></td>
+            <td th:text="${p.location}"></td>
+            <td th:text="${p.totaleDeaths}"></td>
+
+        </tr>
+        </tbody>
+    </table>
+</div>
+</div>
 
 </body>
 </html>

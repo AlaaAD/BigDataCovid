@@ -4,6 +4,10 @@ import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 import org.sid.bigdata.demo.dao.CovidRepository;
 import org.sid.bigdata.demo.entities.Covid;
+import org.sid.bigdata.demo.entities.LocationByCases;
+import org.sid.bigdata.demo.entities.LocationByDeaths;
+import org.sid.bigdata.demo.entities.LocationByMoyenAge;
+import org.sid.bigdata.demo.service.ICovicService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,6 +27,8 @@ import java.util.Map;
 public class UploadController {
     @Autowired
     private CovidRepository covidRepository;
+    @Autowired
+    private ICovicService covidService;
 
     @GetMapping("/")
     public String index() {
@@ -66,27 +72,29 @@ public class UploadController {
     }
     @GetMapping("/nbrCasesPerLocation")
     public String nombresCasesParPays(Model model){
-        Map<String,Integer> map = new HashMap<>();
-        covidRepository.findAll().forEach(covid -> {
-            map.put(covid.getLocation(),Integer.parseInt(covid.getNew_cases()));
-        });
-       // select pays,count pays from table groupe by pays
 
-     //   model.addAttribute("cinemas",cinemas);
+        List<LocationByCases> listCases = covidService.aggregationByAllCases();
+
+        model.addAttribute("listCases",listCases);
+
 
         return "nbrCasesPerLocation";
     }
     @GetMapping("/nbrDeathsPerLocation")
     public String nombresMortsParPays(Model model){
 
-    //    model.addAttribute("cinemas",cinemas);
+        List<LocationByDeaths> listDeaths = covidService.aggregationByAllDeaths();
+
+        model.addAttribute("listDeaths",listDeaths);
 
         return "nbrDeathsPerLocation";
     }
     @GetMapping("/moyenAgePerLocation")
     public String moyenAgeParPays(Model model){
 
-    //    model.addAttribute("cinemas",cinemas);
+        List<LocationByMoyenAge> locationByMoyenAges = covidService.aggregationByAllMoyenAge();
+
+        model.addAttribute("locationByMoyenAges",locationByMoyenAges);
 
         return "moyenAgePerLocation";
     }

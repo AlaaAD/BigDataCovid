@@ -3,50 +3,76 @@ package org.sid.bigdata.demo.service;
 import org.sid.bigdata.demo.dao.CovidRepository;
 
 import org.sid.bigdata.demo.entities.Covid;
-import org.sid.bigdata.demo.entities.Location;
+import org.sid.bigdata.demo.entities.LocationByCases;
+import org.sid.bigdata.demo.entities.LocationByDeaths;
+import org.sid.bigdata.demo.entities.LocationByMoyenAge;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.aggregation.GroupOperation;
 import org.springframework.data.mongodb.core.aggregation.ProjectionOperation;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.group;
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 
 @Service
 public class CovidService implements ICovicService {
 
     @Autowired
-    private CovidRepository covidRepository;
-    private final MongoTemplate mongoTemplate;
-    @Autowired
-    public CovidService(MongoTemplate mongoTemplate) {
-        this.mongoTemplate = mongoTemplate;
+    private  MongoTemplate mongoTemplate;
+
+
+    @Override
+    public List<LocationByCases> aggregationByAllCases() {
+        Aggregation aggregation = Aggregation.newAggregation(
+                Aggregation.group("continent","location").last("location").as("location")
+                        .last("continent").as("continent")
+                        .sum("new_cases").as("totaleCases"),
+                sort(Sort.Direction.DESC,  "totaleCases")
+              );
+
+        AggregationResults<LocationByCases> groupResults = mongoTemplate.aggregate(
+                aggregation, Covid.class, LocationByCases.class);
+
+        List<LocationByCases> locationByCases = groupResults.getMappedResults();
+
+        return locationByCases;
     }
 
     @Override
-    public List<Location> aggregate() {
-        GroupOperation groupOperation = getGroupOperation();
-        ProjectionOperation projectionOperation = getProjectOperation();
+    public List<LocationByDeaths> aggregationByAllDeaths() {
 
-        return mongoTemplate.aggregate(Aggregation.newAggregation(
-                groupOperation,
-                projectionOperation
-        ), Covid.class, Location.class).getMappedResults();
+        Aggregation aggregation = Aggregation.newAggregation(
+                Aggregation.group("continent","location").last("location").as("location")
+                        .last("continent").as("continent").
+                        sum("new_deaths").as("totaleDeaths"),
+                        sort(Sort.Direction.DESC,  "totaleDeaths"));
+
+        AggregationResults<LocationByDeaths> groupResults = mongoTemplate.aggregate(
+                aggregation, Covid.class, LocationByDeaths.class);
+
+        List<LocationByDeaths> locationByDeaths = groupResults.getMappedResults();
+
+        return locationByDeaths;
     }
 
-    private GroupOperation getGroupOperation() {
-        return group("location")
-                .last("location").as("location")
-               // .avg("price").as("averagePrice")
-                .sum("new_cases").as("totaleCases")
-                .sum("new_deaths").as("totalDeaths");
-    }
-    private ProjectionOperation getProjectOperation() {
-        return Aggregation.project("totaleCases", "totalDeaths")
-                .and("location").previousOperation();
-    }
+    @Override
+    public List<LocationByMoyenAge> aggregationByAllMoyenAge() {
+        Aggregation aggregation = Aggregation.newAggregation(
+                Aggregation.group("continent","location").last("location").as("location")
+                        .last("continent").as("continent")
+                        .avg("median_age").as("moyenAge"),
+                sort(Sort.Direction.DESC, "moyenAge"));
 
+        AggregationResults<LocationByMoyenAge> groupResults = mongoTemplate.aggregate(
+                aggregation, Covid.class, LocationByMoyenAge.class);
+
+        List<LocationByMoyenAge> locationByMoyenAges = groupResults.getMappedResults();
+
+        return locationByMoyenAges;
+    }
 }
